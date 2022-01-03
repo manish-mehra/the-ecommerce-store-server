@@ -1,7 +1,7 @@
 const { StatusCodes } = require('http-status-codes')
 const {CustomError} = require('../errors/custom-api')
 const User = require('../models/User')
-
+const {checkPermissions} = require('../middleware/authentication')
 
 const getAllUsers = async (req, res)=>{
     //Get all users where role is 'user' and remove password
