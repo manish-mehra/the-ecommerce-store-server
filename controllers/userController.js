@@ -5,7 +5,6 @@ const {checkPermissions} = require('../middleware/authentication')
 
 const getAllUsers = async (req, res)=>{
     //Get all users where role is 'user' and remove password
-    console.log(req.user)
     const users = await User.find({ role: 'user' }).select('-password')
     res.status(StatusCodes.OK).json({users})
 }
@@ -22,7 +21,7 @@ const getSingleUser = async(req, res)=>{
 }
 
 const showCurrentUser = async(req, res)=>{
-    res.send('show currentuser')
+    res.status(StatusCodes.OK).json({user: req.user})
 }
 
 const updateUser = async(req, res)=>{
