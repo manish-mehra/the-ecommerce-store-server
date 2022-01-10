@@ -2,6 +2,7 @@ const { StatusCodes } = require('http-status-codes')
 const {CustomError} = require('../errors/custom-api')
 const User = require('../models/User')
 const {checkPermissions} = require('../middleware/authentication')
+const { createTokenUser, attachCookiesToResponse } = require('../utils')
 
 const getAllUsers = async (req, res)=>{
     //Get all users where role is 'user' and remove password
@@ -25,7 +26,19 @@ const showCurrentUser = async(req, res)=>{
 }
 
 const updateUser = async(req, res)=>{
+    const {name, email} = req.body
+    if(!name || !email){
+        throw new CustomError.BadRequestError('Please provide all the values')
+    }
+    const user = await User.findOne({_id: req.body.userId})
+    user.name = name
+    user.email = email
     
+    await user.save()
+
+    const tokenUser = createTokenUser(user)
+    attachCookiesToResponse({res, user: tokenUser})
+    res.status(StatusCodes.OK).json({user: tokenUser})
 }
 
 const updateUserPassword = async(req , res)=>{
